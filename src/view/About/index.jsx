@@ -2,9 +2,21 @@ import { motion } from "framer-motion";
 import { ExternalLink, Github, Users } from "lucide-react";
 
 export default function About() {
+
+    const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const searchQuery = event.target.search.value.trim();
+    if (searchQuery) {
+      // Implement search functionality here
+      console.log("Searching for:", searchQuery);
+      // Redirect to search results page or filter current animes
+    }
+    event.target.reset(); // Clear the input after submission
+  }
+
   return (
     <motion.div
-      className="max-w-3xl mx-auto py-16 px-6 text-white"
+      className="max-w-3xl mx-auto py-16 px-6 text-white "
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}

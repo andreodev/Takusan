@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { AnimeSearch } from "../Search";
+import { Menu, X } from "lucide-react";
 
-const NavLink = ({ href, children }) => (
+const NavLink = ({ href, children, onClick }) => (
   <motion.a
     href={href}
-    className="text-white"
+    className="text-white block px-4 py-2 md:p-0"
     whileHover={{ scale: 1.1, color: "#3b82f6" }}
     transition={{ type: "spring", stiffness: 300 }}
+    onClick={onClick}
   >
     {children}
   </motion.a>
@@ -17,6 +19,7 @@ const word = "Takusan";
 
 export default function Header() {
   const [show, setShow] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -36,13 +39,10 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Controles de animação para cada letra
   const controlsArray = word.split("").map(() => useAnimation());
 
-  // Handlers para mouse enter/leave
   const handleMouseEnter = () => {
     controlsArray.forEach((controls, index) => {
-      // Delay stagger usando setTimeout para cada letra
       setTimeout(() => {
         controls.start({
           y: [0, -10, 0],
@@ -60,6 +60,9 @@ export default function Header() {
       });
     });
   };
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <motion.header
@@ -92,7 +95,15 @@ export default function Header() {
           ))}
         </motion.h1>
 
-        <nav className="flex items-center space-x-6">
+        {/* Botão hambúrguer */}
+        <div className="md:hidden">
+          <button onClick={toggleMenu} aria-label="Toggle Menu">
+            {menuOpen ? <X size={28} color="#fff" /> : <Menu size={28} color="#fff" />}
+          </button>
+        </div>
+
+        {/* Menu Desktop */}
+        <nav className="hidden md:flex items-center space-x-6">
           <ul className="flex space-x-6">
             <li>
               <NavLink href="/">Home</NavLink>
@@ -110,6 +121,32 @@ export default function Header() {
           </motion.div>
         </nav>
       </div>
+
+      {/* Menu Mobile */}
+      {menuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="md:hidden bg-[#31363F] px-4 pb-4"
+        >
+          <ul className="flex flex-col space-y-2">
+            <li>
+              <NavLink href="/" onClick={closeMenu}>
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink href="/about" onClick={closeMenu}>
+                Sobre
+              </NavLink>
+            </li>
+          </ul>
+          <div className="mt-4">
+            <AnimeSearch />
+          </div>
+        </motion.div>
+      )}
     </motion.header>
   );
 }
